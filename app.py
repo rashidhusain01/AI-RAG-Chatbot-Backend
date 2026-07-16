@@ -6,6 +6,9 @@ from pdf_utils import extract_text_from_pdf, split_text_into_chunks
 
 from embeddings import create_embeddings, create_query_embedding
 
+from embeddings import get_model
+
+
 from vector_store import (
     create_faiss_index,
     save_faiss,
@@ -19,15 +22,27 @@ from llm import generate_answer
 app = FastAPI()
 
 
+
+@app.on_event("startup")
+def startup():
+    print("Loading embedding model...")
+    get_model()
+    print("Embedding model loaded successfully.")
+
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173"
+        "https://ai-rag-chatbot-frontend.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 
 
@@ -76,6 +91,13 @@ async def upload_pdf(file: UploadFile = File(...)):
         print("3")
 
         pdf_text = extract_text_from_pdf(file_path)
+
+        if not pdf_text.strip():
+            raise HTTPException(
+        status_code=400,
+        detail="PDF contains no readable text."
+        )
+        
 
         print("4")
 
