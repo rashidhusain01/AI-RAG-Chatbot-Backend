@@ -34,8 +34,9 @@ def startup():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
-        "https://ai-rag-chatbot-frontend.vercel.app"
+        "http://localhost:5173",
+        "https://ai-rag-chatbot-frontend.vercel.app",
+        "https://ai-rag-chatbot-frontend-30xksfspu-rashid-cse.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
